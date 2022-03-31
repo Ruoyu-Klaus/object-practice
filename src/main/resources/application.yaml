@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    generate-ddl: false
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/jobseeker
+    username: root
+    password: password
+  flyway:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/jobseeker
+    user: root
+    password: password
