@@ -1,5 +1,5 @@
 # Getting Started
-### Domain includes five instances
+### Domain includes five instances：
 - Jobs
 - Jobseekers
 - Employers
@@ -7,30 +7,20 @@
 - Job Applications
 
 ### Interaction
-1. Employers能够发布jobs
-2. Employers也应能看见他们所发布的jobs清单
-3. Jobseekers能够保存jobs以便以后查看
-4. Jobseekers可以申请employers发布的jobs
-5. employers可以发布两类Jobs: JReq and ATS
-6. JReq类型的jobs需要resume才能申请它们
-7. ATS类型的jobs无需resume
-8. Jobseekers不能以他人的resume申请job
-9. Jobseekers能够以不同的resumes申请不同的jobs
-10. Jobseekers能够保存jobs清单以便后续查看
-11. Jobseekers能够查看已申请的jobs清单
-12. Employers能够通过job或者day查看申请job的jobseekers。并且可以联合job和day来查看申请job的jobseekers
-13. 能够获取任一jobseekers在给定day的jobs申请情况
-14. 能够以csv或html格式获取job申请报告
-15. 能够从job申请报告中确定jobseeker，job，employer和job申请日期
-16. 通过job和employer应该能够看到有总job申请数量
-17. 通过job和employer应该能够看到有多少job申请失败，以及有多少job累计成功
-18. Jobseekers在显示时应以他们的名字
-19. Employers在显示时应以他们的名字
-20. Jobs显示时应显示一个title和发布它的employer的名字
-21. 系统能够处理具有相同title的多个jobs
-22. 系统能够处理同名的多个Jobseekers
-23. 系统能够处理同名的多个employer
-
+1. Employers can post jobs
+2. Employers can check job list they post
+4. Jobseekers can apply jobs posted by employers
+5. Employers can post two types of jobs --- JReq and ATS
+6. JReq needs resume for application
+7. ATS is needless resume for application
+8. Jobseekers cannot use other's resume for application
+9. Jobseekers can use different resumes for different jobs
+10. Jobseekers can save jobs for future use
+11. Jobseekers can check jobs they applied and filtered by given apply date
+12. Employers can get jobseeker list by apply date or job they posted
+21. System can handle multiple jobs with same name
+22. System can handle multiple jobseekers with same name
+23. System can handle multiple employers with same name
 
 ### Examples
 - C#：https://gist.github.com/onlytiancai/1738383
