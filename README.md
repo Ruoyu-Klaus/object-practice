@@ -9,18 +9,32 @@
 ### Interaction
 1. Employers can post jobs
 2. Employers can check job list they post
-4. Jobseekers can apply jobs posted by employers
-5. Employers can post two types of jobs --- JReq and ATS
-6. JReq needs resume for application
-7. ATS is needless resume for application
-8. Jobseekers cannot use other's resume for application
-9. Jobseekers can use different resumes for different jobs
-10. Jobseekers can save jobs for future use
-11. Jobseekers can check jobs they applied and filtered by given apply date
-12. Employers can get jobseeker list by apply date or job they posted
-21. System can handle multiple jobs with same name
-22. System can handle multiple jobseekers with same name
-23. System can handle multiple employers with same name
+3. Jobseekers can apply jobs posted by employers
+4. Employers can post two types of jobs --- JReq and ATS
+5. JReq needs resume for application
+6. ATS is needless resume for application
+7. Jobseekers cannot use other's resume for application
+8. Jobseekers can use different resumes for different jobs
+9. Jobseekers can save jobs for future use
+10. Jobseekers can check jobs they applied and filtered by given apply date
+11. Employers can get jobseeker list by apply date or job they posted
+12. System can handle multiple jobs with same name
+13. System can handle multiple jobseekers with same name
+14. System can handle multiple employers with same name
+
+### Tasking
+- [ ] Design domain model
+- [ ] Establish entities
+- [ ] Build user controller
+  - [ ] Define Restful entrypoint for creating a new user
+  - [ ] Define user request DTO
+  - [ ] handle DTO arguments exception
+  - [ ] Define user response DTO
+  - [ ] Call user service to create user
+  - [ ] Response request
+
+
+
 
 ### Examples
 - C#：https://gist.github.com/onlytiancai/1738383
