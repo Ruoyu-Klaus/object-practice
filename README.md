@@ -23,15 +23,15 @@
 14. System can handle multiple employers with same name
 
 ### Tasking
-- [ ] Design domain model
-- [ ] Establish entities
-- [ ] Build user controller
-  - [ ] Define Restful entrypoint for creating a new user
-  - [ ] Define user request DTO
-  - [ ] handle DTO arguments exception
-  - [ ] Define user response DTO
-  - [ ] Call user service to create user
-  - [ ] Response request
+- [X] Design domain model
+- [X] Establish entities
+- [X] Build user controller
+  - [x] Define Restful entrypoint for creating a new user
+  - [x] Define user request DTO
+  - [x] handle DTO arguments exception
+  - [x] Define user response DTO
+  - [x] Call user service to create user
+  - [x] Response request
 
 
 
