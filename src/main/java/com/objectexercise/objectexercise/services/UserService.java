@@ -7,5 +7,7 @@ import java.util.List;
 public interface UserService {
     AppUser createUser(AppUser appUser);
 
+    AppUser getCurrentLoginUser();
+
     List<AppUser> findAllUsers();
 }

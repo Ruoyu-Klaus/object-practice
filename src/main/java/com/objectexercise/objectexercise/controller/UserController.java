@@ -1,4 +1,5 @@
 package com.objectexercise.objectexercise.controller;
+
 import com.objectexercise.objectexercise.controller.requestDTO.UserRequest;
 import com.objectexercise.objectexercise.controller.responseDTO.UserResponse;
 import com.objectexercise.objectexercise.model.AppUser;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-public class UserResource {
+public class UserController {
 
     private final UserService userService;
 
@@ -26,7 +27,7 @@ public class UserResource {
 
     @PostMapping("")
     public UserResponse createUser(@RequestBody UserRequest userRequest) {
-        AppUser user = userService.createUser(AppUser.builder().name(userRequest.getUsername()).password(userRequest.getPassword()).roles(userRequest.getRoles()).build());
-        return UserResponse.builder().id(user.getId()).username(user.getName()).roles(user.getRoles()).build();
+        AppUser user = userService.createUser(AppUser.fromDTO(userRequest));
+        return UserResponse.builder().id(user.getId()).accountName(user.getAccountName()).username(user.getName()).roles(user.getRoles()).build();
     }
 }

@@ -3,6 +3,7 @@ package com.objectexercise.objectexercise.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,7 +32,8 @@ public class Config extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests().anyRequest().permitAll();
-        http.authorizeRequests().antMatchers("/api/v1/jobs").hasAnyAuthority("APPLICANT", "RECRUITER", "ADMIN");
+        http.authorizeRequests().mvcMatchers(HttpMethod.GET,"/api/v1/jobs").hasAnyAuthority("APPLICANT", "RECRUITER", "ADMIN");
+        http.authorizeRequests().mvcMatchers(HttpMethod.POST,"/api/v1/jobs").hasAnyAuthority("RECRUITER");
         http.authorizeRequests().antMatchers("/api/v1/users/**").hasAnyAuthority("ADMIN");
         http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
