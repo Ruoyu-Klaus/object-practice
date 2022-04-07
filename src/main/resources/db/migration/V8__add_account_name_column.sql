@@ -1,0 +1,2 @@
+ALTER TABLE app_user
+ADD COLUMN account_name VARCHAR(64) NOT NULL;

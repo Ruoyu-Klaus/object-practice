@@ -1,17 +1,14 @@
 package com.objectexercise.objectexercise.repository.Entity;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "app_user")
+@Getter
 @Builder
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity {
@@ -21,6 +18,9 @@ public class UserEntity {
     private Integer id;
 
     private String name;
+
+    @Column(name = "account_name")
+    private String accountName;
 
     private String password;
 

@@ -15,6 +15,8 @@ public class UserResponse {
 
     private String username;
 
+    private String accountName;
+
     private Collection<UserRole> roles;
 
 }
