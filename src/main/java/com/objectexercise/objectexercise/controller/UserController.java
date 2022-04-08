@@ -5,6 +5,7 @@ import com.objectexercise.objectexercise.controller.responseDTO.UserResponse;
 import com.objectexercise.objectexercise.model.AppUser;
 import com.objectexercise.objectexercise.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public UserResponse createUser(@RequestBody UserCreationForm userRequest) {
+    public UserResponse createUser(@RequestBody @Validated UserCreationForm userRequest) {
         AppUser user = userService.createUser(AppUser.fromDTO(userRequest));
         return UserResponse.builder().id(user.getId()).accountName(user.getAccountName()).username(user.getName()).roles(user.getRoles()).build();
     }

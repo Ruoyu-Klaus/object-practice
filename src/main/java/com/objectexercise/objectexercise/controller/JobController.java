@@ -8,6 +8,7 @@ import com.objectexercise.objectexercise.model.Job;
 import com.objectexercise.objectexercise.services.JobService;
 import com.objectexercise.objectexercise.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class JobController {
     }
 
     @PostMapping("")
-    public JobResponse addJob(@RequestBody JobCreationForm form) {
+    public JobResponse addJob(@RequestBody @Validated JobCreationForm form) {
         Job job = jobService.createJob(Job.fromDTO(form));
         return new JobResponse(job.getId(), job.getTitle(), job.getType(), getCurrenUserResponse(), job.getPostDate());
     }

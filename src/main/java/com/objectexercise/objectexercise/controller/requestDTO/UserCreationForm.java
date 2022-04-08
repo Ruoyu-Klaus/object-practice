@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
@@ -30,6 +31,8 @@ public class UserCreationForm {
     private String password;
 
     @NotNull(message = "user role must not be null")
+    @Valid
+
     private Collection<UserRole> roles;
 
 }

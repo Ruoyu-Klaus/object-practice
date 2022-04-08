@@ -1,5 +1,6 @@
 package com.objectexercise.objectexercise;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.objectexercise.objectexercise.controller.responseDTO.ErrorResponse;
 import com.objectexercise.objectexercise.exceptions.appUser.UserRuntimeException;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,16 @@ public class GlobalExceptionHandler {
                         .build())
                 .collect(Collectors.toList());
         return ResponseEntity.status(BAD_REQUEST).body(errorResponses);
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<ErrorResponse> handle(InvalidFormatException ex){
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .error(BAD_REQUEST.getReasonPhrase())
+                .message(ex.getMessage())
+                .status(BAD_REQUEST.value())
+                .build();
+        return ResponseEntity.status(BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(UserRuntimeException.class)

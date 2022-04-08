@@ -3,7 +3,11 @@ package com.objectexercise.objectexercise.services;
 import com.objectexercise.objectexercise.controller.DTO.UserRole;
 import com.objectexercise.objectexercise.exceptions.appUser.UserRuntimeException;
 import com.objectexercise.objectexercise.model.AppUser;
+import com.objectexercise.objectexercise.repository.EmployerRepository;
+import com.objectexercise.objectexercise.repository.Entity.EmployerEntity;
+import com.objectexercise.objectexercise.repository.Entity.JobSeekerEntity;
 import com.objectexercise.objectexercise.repository.Entity.UserEntity;
+import com.objectexercise.objectexercise.repository.JobSeekerRepository;
 import com.objectexercise.objectexercise.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +33,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     final UserRepository userRepository;
+    final JobSeekerRepository jobSeekerRepository;
+    final EmployerRepository employerRepository;
     final BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -47,6 +54,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     @Override
+    @Transactional
     public AppUser createUser(AppUser appUser) {
         if(appUser.getRoles().contains(UserRole.ADMIN)){
             throw new UserRuntimeException("unsupported admin user creation");
@@ -56,6 +64,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         UserEntity userEntity = userRepository.save(appUser.toEntity());
+        if(appUser.getRoles().contains(UserRole.APPLICANT)){
+            jobSeekerRepository.save(JobSeekerEntity.builder().user_id(userEntity.getId()).name(userEntity.getName()).build());
+        }
+        if(appUser.getRoles().contains(UserRole.RECRUITER)){
+            employerRepository.save(EmployerEntity.builder().user_id(userEntity.getId()).name(userEntity.getName()).build());
+        }
         return AppUser.fromEntity(userEntity);
     }
 
