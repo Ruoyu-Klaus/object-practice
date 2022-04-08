@@ -1,7 +1,7 @@
 package com.objectexercise.objectexercise.model;
 
 import com.objectexercise.objectexercise.controller.DTO.JobType;
-import com.objectexercise.objectexercise.controller.requestDTO.JobRequest;
+import com.objectexercise.objectexercise.controller.requestDTO.JobCreationForm;
 import com.objectexercise.objectexercise.repository.Entity.JobEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +25,7 @@ public class Job {
 
     private Timestamp postDate;
 
-    public static Job fromDTO(JobRequest JobRequest) {
+    public static Job fromDTO(JobCreationForm JobRequest) {
         return Job.builder().title(JobRequest.getTitle()).type(JobRequest.getType()).build();
     }
 

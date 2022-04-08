@@ -1,6 +1,6 @@
 package com.objectexercise.objectexercise.controller;
 
-import com.objectexercise.objectexercise.controller.requestDTO.UserRequest;
+import com.objectexercise.objectexercise.controller.requestDTO.UserCreationForm;
 import com.objectexercise.objectexercise.controller.responseDTO.UserResponse;
 import com.objectexercise.objectexercise.model.AppUser;
 import com.objectexercise.objectexercise.services.UserService;
@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public UserResponse createUser(@RequestBody UserRequest userRequest) {
+    public UserResponse createUser(@RequestBody UserCreationForm userRequest) {
         AppUser user = userService.createUser(AppUser.fromDTO(userRequest));
         return UserResponse.builder().id(user.getId()).accountName(user.getAccountName()).username(user.getName()).roles(user.getRoles()).build();
     }

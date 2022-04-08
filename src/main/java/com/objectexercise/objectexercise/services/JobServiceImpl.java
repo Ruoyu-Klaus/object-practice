@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,12 +17,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public List<Job> getAllJobs() {
-        return null;
-    }
-
-    @Override
-    public List<Job> getJobsByEmployerId(Integer employerId) {
-        return null;
+        return jobRepository.findAll().stream().map(Job::fromEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -31,8 +27,4 @@ public class JobServiceImpl implements JobService {
         return Job.fromEntity(jobRepository.save(jobPosition.toEntity()));
     }
 
-    @Override
-    public void deleteJobById(Integer jobId) {
-
-    }
 }

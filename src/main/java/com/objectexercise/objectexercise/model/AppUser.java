@@ -1,7 +1,7 @@
 package com.objectexercise.objectexercise.model;
 
 import com.objectexercise.objectexercise.controller.DTO.UserRole;
-import com.objectexercise.objectexercise.controller.requestDTO.UserRequest;
+import com.objectexercise.objectexercise.controller.requestDTO.UserCreationForm;
 import com.objectexercise.objectexercise.repository.Entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +28,7 @@ public class AppUser {
 
     private Collection<UserRole> roles;
 
-    public static AppUser fromDTO(UserRequest userRequest){
+    public static AppUser fromDTO(UserCreationForm userRequest){
         AppUser appUser = new AppUser();
         BeanUtils.copyProperties(userRequest,appUser);
         return appUser;

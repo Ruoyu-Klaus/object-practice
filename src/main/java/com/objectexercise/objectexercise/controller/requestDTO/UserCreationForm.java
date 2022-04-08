@@ -7,13 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 
-@Data @Builder @AllArgsConstructor @NoArgsConstructor
-public class UserRequest {
+@Data @Builder @AllArgsConstructor @NoArgsConstructor @Validated
+public class UserCreationForm {
 
     @JsonProperty("username")
     @NotNull(message = "user name must not be null")

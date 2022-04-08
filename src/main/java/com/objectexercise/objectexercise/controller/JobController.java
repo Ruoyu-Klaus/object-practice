@@ -1,6 +1,6 @@
 package com.objectexercise.objectexercise.controller;
 
-import com.objectexercise.objectexercise.controller.requestDTO.JobRequest;
+import com.objectexercise.objectexercise.controller.requestDTO.JobCreationForm;
 import com.objectexercise.objectexercise.controller.responseDTO.JobResponse;
 import com.objectexercise.objectexercise.controller.responseDTO.UserResponse;
 import com.objectexercise.objectexercise.model.AppUser;
@@ -29,7 +29,7 @@ public class JobController {
     }
 
     @PostMapping("")
-    public JobResponse addJob(@RequestBody JobRequest form) {
+    public JobResponse addJob(@RequestBody JobCreationForm form) {
         Job job = jobService.createJob(Job.fromDTO(form));
         return new JobResponse(job.getId(), job.getTitle(), job.getType(), getCurrenUserResponse(), job.getPostDate());
     }
