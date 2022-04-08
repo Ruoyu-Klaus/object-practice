@@ -29,19 +29,23 @@ public class Config extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeHttpRequests().anyRequest().permitAll();
-        http.authorizeRequests().mvcMatchers(HttpMethod.GET,"/api/v1/jobs").hasAnyAuthority("APPLICANT", "RECRUITER", "ADMIN");
-        http.authorizeRequests().mvcMatchers(HttpMethod.POST,"/api/v1/jobs").hasAnyAuthority("RECRUITER");
-        http.authorizeRequests().antMatchers("/api/v1/users/**").hasAnyAuthority("ADMIN");
-        http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers("/api/v1/**").authenticated()
+                .antMatchers("/api/v1/users/**").hasAnyAuthority("ADMIN")
+                .mvcMatchers(HttpMethod.GET, "/api/v1/jobs/**").hasAnyAuthority("APPLICANT", "RECRUITER", "ADMIN")
+                .mvcMatchers(HttpMethod.POST, "/api/v1/jobs/**").hasAnyAuthority("RECRUITER","ADMIN")
+                .mvcMatchers(HttpMethod.POST, "/api/v1/applications/**").hasAnyAuthority("RECRUITER" )
+                .antMatchers(HttpMethod.POST,"/api/v1/resume/**").hasAnyAuthority("APPLICANT","ADMIN")
+                .and()
+                .addFilter(new CustomAuthenticationFilter(authenticationManagerBean()))
+                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
     @Override
-    public  AuthenticationManager authenticationManagerBean() throws Exception{
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 }
