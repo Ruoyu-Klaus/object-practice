@@ -10,4 +10,6 @@ public interface UserService {
     AppUser getCurrentLoginUser();
 
     List<AppUser> findAllUsers();
+
+    AppUser findUserById(Integer userId);
 }

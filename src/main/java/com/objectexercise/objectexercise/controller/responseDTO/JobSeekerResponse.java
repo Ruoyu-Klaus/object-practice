@@ -1,22 +1,17 @@
 package com.objectexercise.objectexercise.controller.responseDTO;
 
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class ResumeResponse {
 
+public class JobSeekerResponse {
     private Integer id;
 
-    @JsonProperty("title")
     private String name;
-
-    private JobSeekerResponse jobSeeker;
 }

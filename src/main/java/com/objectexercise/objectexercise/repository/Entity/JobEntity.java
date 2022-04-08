@@ -1,13 +1,11 @@
 package com.objectexercise.objectexercise.repository.Entity;
 
 
-import com.objectexercise.objectexercise.controller.DTO.JobType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

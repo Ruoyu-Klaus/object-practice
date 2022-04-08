@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         UserEntity userEntity = userRepository.save(appUser.toEntity());
         if(appUser.getRoles().contains(UserRole.APPLICANT)){
-            jobSeekerRepository.save(JobSeekerEntity.builder().user_id(userEntity.getId()).name(userEntity.getName()).build());
+            jobSeekerRepository.save(JobSeekerEntity.builder().userId(userEntity.getId()).name(userEntity.getName()).build());
         }
         if(appUser.getRoles().contains(UserRole.RECRUITER)){
             employerRepository.save(EmployerEntity.builder().user_id(userEntity.getId()).name(userEntity.getName()).build());
@@ -86,6 +86,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<AppUser> findAllUsers() {
         return userRepository.findAll().stream().map(AppUser::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public AppUser findUserById(Integer userId) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+        if(!user.isPresent()){
+            throw new UserRuntimeException("userId: ["+ userId +"] does not exist!");
+        }
+        return AppUser.fromEntity(user.get());
     }
 
 }

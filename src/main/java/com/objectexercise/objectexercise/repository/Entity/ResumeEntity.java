@@ -1,6 +1,5 @@
 package com.objectexercise.objectexercise.repository.Entity;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,19 +8,20 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name="jobseeker")
-@Builder
+@Table(name="resume")
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class JobSeekerEntity {
+public class ResumeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
+    @Column(name = "jobseeker_id")
 
-    @Column(name = "user_id")
-    private Integer userId;
+    private Integer jobseekerId;
+
 }
