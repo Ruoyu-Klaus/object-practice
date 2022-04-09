@@ -11,7 +11,9 @@ import com.objectexercise.objectexercise.repository.ResumeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,27 +24,38 @@ public class JobSeekerServiceImpl implements JobSeekerService {
 
 
     @Override
-    public JobSeeker getJobSeekerInfoById(Integer jobSeekerId) {
-        Optional<JobSeekerEntity> jobSeekerOptional = jobSeekerRepository.findById(jobSeekerId);
-        if(!jobSeekerOptional.isPresent()){
-            throw new UserRuntimeException("Job seeker not found");
+    public JobSeeker getJobSeekerByCurrentUser() {
+        AppUser currentLoginUser = userService.getCurrentLoginUser();
+        Optional<JobSeekerEntity> jobseeker = jobSeekerRepository.findByUserId(currentLoginUser.getId());
+        if (!jobseeker.isPresent()) {
+            throw new UserRuntimeException("you are not job seeker");
         }
-        JobSeekerEntity jobSeeker = jobSeekerOptional.get();
-        return JobSeeker.builder().id(jobSeeker.getId()).name(jobSeeker.getName()).userId(jobSeeker.getUserId()).build();
+        return JobSeeker.fromEntity(jobseeker.get());
     }
 
     @Override
     public Resume createResume(Resume resume) {
-        AppUser currentLoginUser = userService.getCurrentLoginUser();
-        Optional<JobSeekerEntity> jobseeker = jobSeekerRepository.findByUserId(currentLoginUser.getId());
-        if(!jobseeker.isPresent()){
-            throw new UserRuntimeException("you are not job seeker");
-        }
-        resume.setJobSeekerId(jobseeker.get().getId());
+        JobSeeker jobSeeker = getJobSeekerByCurrentUser();
+        resume.setJobSeeker(jobSeeker);
         ResumeEntity resumeEntity = resumeRepository.save(resume.toEntity());
-        return Resume.fromEntity(resumeEntity);
+        return Resume.fromEntity(resumeEntity, jobSeeker);
     }
 
+    @Override
+    public List<Resume> getJobSeekerResumes() {
+        JobSeeker jobSeeker = getJobSeekerByCurrentUser();
+        return resumeRepository.findByJobseekerId(jobSeeker.getId()).stream().map(resumeEntity -> Resume.fromEntity(resumeEntity, jobSeeker)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Resume> getJobSeekerResumes(Integer jobSeekerId) {
+        Optional<JobSeekerEntity> jobSeekerEntity = jobSeekerRepository.findById(jobSeekerId);
+        if (!jobSeekerEntity.isPresent()) {
+            throw new UserRuntimeException("you are not job seeker");
+        }
+        JobSeeker jobSeeker = JobSeeker.fromEntity(jobSeekerEntity.get());
+        return resumeRepository.findByJobseekerId(jobSeekerId).stream().map(resumeEntity -> Resume.fromEntity(resumeEntity, jobSeeker)).collect(Collectors.toList());
+    }
 
 
 }

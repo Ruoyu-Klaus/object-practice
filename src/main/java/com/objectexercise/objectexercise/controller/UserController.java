@@ -22,7 +22,7 @@ public class UserController {
     public List<UserResponse> getUsers() {
         return userService.findAllUsers()
                 .stream()
-                .map(appUser -> UserResponse.builder().id(appUser.getId()).username(appUser.getName()).roles(appUser.getRoles()).build())
+                .map(AppUser::toDTO)
                 .collect(Collectors.toList());
     }
 

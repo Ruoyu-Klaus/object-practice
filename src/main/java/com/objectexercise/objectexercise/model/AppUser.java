@@ -2,6 +2,7 @@ package com.objectexercise.objectexercise.model;
 
 import com.objectexercise.objectexercise.controller.DTO.UserRole;
 import com.objectexercise.objectexercise.controller.requestDTO.UserCreationForm;
+import com.objectexercise.objectexercise.controller.responseDTO.UserResponse;
 import com.objectexercise.objectexercise.repository.Entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +33,10 @@ public class AppUser {
         AppUser appUser = new AppUser();
         BeanUtils.copyProperties(userRequest,appUser);
         return appUser;
+    }
+
+    public UserResponse toDTO(){
+        return UserResponse.builder().id(id).username(name).roles(roles).accountName(accountName).build();
     }
 
     public UserEntity toEntity(){

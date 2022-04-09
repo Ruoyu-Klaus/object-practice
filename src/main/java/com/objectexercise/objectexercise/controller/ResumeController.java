@@ -2,17 +2,17 @@ package com.objectexercise.objectexercise.controller;
 
 
 import com.objectexercise.objectexercise.controller.requestDTO.ResumeCreationForm;
-import com.objectexercise.objectexercise.controller.responseDTO.JobSeekerResponse;
 import com.objectexercise.objectexercise.controller.responseDTO.ResumeResponse;
 import com.objectexercise.objectexercise.model.JobSeeker;
 import com.objectexercise.objectexercise.model.Resume;
 import com.objectexercise.objectexercise.services.JobSeekerService;
+import com.objectexercise.objectexercise.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/resume")
@@ -20,13 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class ResumeController {
 
     final JobSeekerService jobSeekerService;
+    final UserService userService;
+
+    @GetMapping("/my")
+    public List<ResumeResponse> getMyResumes() {
+        List<Resume> jobSeekerResumes = jobSeekerService.getJobSeekerResumes();
+        return jobSeekerResumes.stream().map(Resume::toDTO).collect(Collectors.toList());
+    }
 
     @PostMapping("")
-    public ResumeResponse createResume(@RequestBody @Validated ResumeCreationForm resumeCreationForm)
-    {
+    public ResumeResponse createResume(@RequestBody @Validated ResumeCreationForm resumeCreationForm) {
         Resume resume = jobSeekerService.createResume(Resume.fromDTO(resumeCreationForm));
-        JobSeeker jobSeeker = jobSeekerService.getJobSeekerInfoById(resume.getJobSeekerId());
-        return ResumeResponse.builder().id(resume.getId()).name(resume.getName()).jobSeeker(JobSeekerResponse.builder().id(jobSeeker.getId()).name(jobSeeker.getName()).build()).build();
+        return resume.toDTO();
     }
 
 }

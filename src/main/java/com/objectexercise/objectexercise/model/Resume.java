@@ -1,6 +1,7 @@
 package com.objectexercise.objectexercise.model;
 
 import com.objectexercise.objectexercise.controller.requestDTO.ResumeCreationForm;
+import com.objectexercise.objectexercise.controller.responseDTO.ResumeResponse;
 import com.objectexercise.objectexercise.repository.Entity.ResumeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,18 +18,22 @@ public class Resume {
 
     private String name;
 
-    private Integer jobSeekerId;
+    private JobSeeker jobSeeker;
 
     public static Resume fromDTO(ResumeCreationForm resumeCreationForm){
         return Resume.builder().name(resumeCreationForm.getName()).build();
     }
 
-    public static Resume fromEntity(ResumeEntity resumeEntity){
-        return Resume.builder().id(resumeEntity.getId()).name(resumeEntity.getName()).jobSeekerId(resumeEntity.getJobseekerId()).build();
+    public ResumeResponse toDTO(){
+        return ResumeResponse.builder().id(id).name(name).jobSeeker(jobSeeker.toDTO()).build();
+    }
+
+    public static Resume fromEntity(ResumeEntity resumeEntity,JobSeeker jobSeeker){
+        return Resume.builder().id(resumeEntity.getId()).name(resumeEntity.getName()).jobSeeker(jobSeeker).build();
     }
 
     public ResumeEntity toEntity(){
-        return ResumeEntity.builder().jobseekerId(jobSeekerId).name(name).build();
+        return ResumeEntity.builder().jobseekerId(jobSeeker.getId()).name(name).build();
     }
 
 
