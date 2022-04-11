@@ -3,7 +3,6 @@ package com.objectexercise.objectexercise.controller;
 
 import com.objectexercise.objectexercise.controller.requestDTO.ResumeCreationForm;
 import com.objectexercise.objectexercise.controller.responseDTO.ResumeResponse;
-import com.objectexercise.objectexercise.model.JobSeeker;
 import com.objectexercise.objectexercise.model.Resume;
 import com.objectexercise.objectexercise.services.JobSeekerService;
 import com.objectexercise.objectexercise.services.UserService;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/resume")
+@RequestMapping("/api/v1/resumes")
 @RequiredArgsConstructor
 public class ResumeController {
 

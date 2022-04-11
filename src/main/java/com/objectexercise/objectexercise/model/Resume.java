@@ -33,7 +33,7 @@ public class Resume {
     }
 
     public ResumeEntity toEntity(){
-        return ResumeEntity.builder().jobseekerId(jobSeeker.getId()).name(name).build();
+        return ResumeEntity.builder().jobSeekerId(jobSeeker.getId()).name(name).build();
     }
 
 

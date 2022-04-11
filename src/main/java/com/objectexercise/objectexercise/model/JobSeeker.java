@@ -1,8 +1,6 @@
 package com.objectexercise.objectexercise.model;
 
-import com.objectexercise.objectexercise.controller.DTO.JobType;
 import com.objectexercise.objectexercise.controller.responseDTO.JobSeekerResponse;
-import com.objectexercise.objectexercise.repository.Entity.JobEntity;
 import com.objectexercise.objectexercise.repository.Entity.JobSeekerEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

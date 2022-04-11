@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -36,8 +37,8 @@ public class Config extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/users/**").hasAnyAuthority("ADMIN")
                 .mvcMatchers(HttpMethod.GET, "/api/v1/jobs/**").hasAnyAuthority("APPLICANT", "RECRUITER", "ADMIN")
                 .mvcMatchers(HttpMethod.POST, "/api/v1/jobs/**").hasAnyAuthority("RECRUITER","ADMIN")
-                .mvcMatchers(HttpMethod.POST, "/api/v1/applications/**").hasAnyAuthority("RECRUITER" )
-                .antMatchers(HttpMethod.POST,"/api/v1/resume/**").hasAnyAuthority("APPLICANT","ADMIN")
+                .antMatchers(HttpMethod.POST,"/api/v1/resumes/**").hasAnyAuthority("APPLICANT")
+                .antMatchers(HttpMethod.POST, "/api/v1/applications/**").hasAnyAuthority("APPLICANT","RECRUITER" )
                 .and()
                 .addFilter(new CustomAuthenticationFilter(authenticationManagerBean()))
                 .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

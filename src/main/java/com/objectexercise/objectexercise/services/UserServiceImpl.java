@@ -3,6 +3,7 @@ package com.objectexercise.objectexercise.services;
 import com.objectexercise.objectexercise.controller.DTO.UserRole;
 import com.objectexercise.objectexercise.exceptions.appUser.UserRuntimeException;
 import com.objectexercise.objectexercise.model.AppUser;
+import com.objectexercise.objectexercise.model.Employer;
 import com.objectexercise.objectexercise.repository.EmployerRepository;
 import com.objectexercise.objectexercise.repository.Entity.EmployerEntity;
 import com.objectexercise.objectexercise.repository.Entity.JobSeekerEntity;
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             jobSeekerRepository.save(JobSeekerEntity.builder().userId(userEntity.getId()).name(userEntity.getName()).build());
         }
         if(appUser.getRoles().contains(UserRole.RECRUITER)){
-            employerRepository.save(EmployerEntity.builder().user_id(userEntity.getId()).name(userEntity.getName()).build());
+            employerRepository.save(EmployerEntity.builder().userId(userEntity.getId()).name(userEntity.getName()).build());
         }
         return AppUser.fromEntity(userEntity);
     }
@@ -95,6 +96,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new UserRuntimeException("userId: ["+ userId +"] does not exist!");
         }
         return AppUser.fromEntity(user.get());
+    }
+
+    @Override
+    public Employer findEmployerByUserId(Integer userId) {
+        Optional<EmployerEntity> optionalEmployerEntity = employerRepository.findByUserId(userId);
+        if(!optionalEmployerEntity.isPresent()){
+            throw new UserRuntimeException("employer with userId: ["+ userId +"] does not exist!");
+        }
+        return Employer.fromEntity(optionalEmployerEntity.get());
     }
 
 }

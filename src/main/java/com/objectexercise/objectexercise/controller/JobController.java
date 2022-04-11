@@ -2,11 +2,8 @@ package com.objectexercise.objectexercise.controller;
 
 import com.objectexercise.objectexercise.controller.requestDTO.JobCreationForm;
 import com.objectexercise.objectexercise.controller.responseDTO.JobResponse;
-import com.objectexercise.objectexercise.controller.responseDTO.UserResponse;
-import com.objectexercise.objectexercise.model.AppUser;
 import com.objectexercise.objectexercise.model.Job;
 import com.objectexercise.objectexercise.services.JobService;
-import com.objectexercise.objectexercise.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +16,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JobController {
     private final JobService jobService;
-    private final UserService userService;
 
     @GetMapping("")
     public List<JobResponse> getJobs() {
         return jobService.getAllJobs().stream().map(job -> JobResponse.builder()
-                        .id(job.getId()).employer(getCurrenUserResponse()).postDate(job.getPostDate())
+                        .id(job.getId())
+                        .title(job.getTitle())
+                        .type(job.getType())
+                        .employer(job.getEmployer().toDTO())
+                        .postDate(job.getPostDate())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -32,12 +32,13 @@ public class JobController {
     @PostMapping("")
     public JobResponse addJob(@RequestBody @Validated JobCreationForm form) {
         Job job = jobService.createJob(Job.fromDTO(form));
-        return new JobResponse(job.getId(), job.getTitle(), job.getType(), getCurrenUserResponse(), job.getPostDate());
+        return JobResponse.builder()
+                .id(job.getId())
+                .title(job.getTitle())
+                .type(job.getType())
+                .employer(job.getEmployer().toDTO())
+                .postDate(job.getPostDate())
+                .build();
     }
 
-
-    private UserResponse getCurrenUserResponse() {
-        AppUser currentLoginUser = userService.getCurrentLoginUser();
-        return UserResponse.builder().id(currentLoginUser.getId()).accountName(currentLoginUser.getAccountName()).username(currentLoginUser.getName()).roles(currentLoginUser.getRoles()).build();
-    }
 }

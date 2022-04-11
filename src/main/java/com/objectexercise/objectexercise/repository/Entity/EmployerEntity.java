@@ -3,6 +3,7 @@ package com.objectexercise.objectexercise.repository.Entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Table(name = "employer")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @Builder
 public class EmployerEntity {
 
@@ -20,5 +22,6 @@ public class EmployerEntity {
 
     private String name;
 
-    private Integer user_id;
+    @Column(name = "user_id")
+    private Integer userId;
 }

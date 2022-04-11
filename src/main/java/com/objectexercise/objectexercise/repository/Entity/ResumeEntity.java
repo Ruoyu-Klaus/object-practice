@@ -20,8 +20,8 @@ public class ResumeEntity {
     private Integer id;
 
     private String name;
-    @Column(name = "jobseeker_id")
 
-    private Integer jobseekerId;
+    @Column(name = "jobseeker_id")
+    private Integer jobSeekerId;
 
 }
