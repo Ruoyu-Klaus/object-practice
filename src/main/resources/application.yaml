@@ -1,3 +1,6 @@
+jwt:
+  secret:
+    mysecret
 spring:
   jpa:
     generate-ddl: false
