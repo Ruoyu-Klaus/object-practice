@@ -1,6 +1,7 @@
 package com.objectexercise.objectexercise.repository.Entity;
 
 import com.objectexercise.objectexercise.controller.DTO.ApplicationStatus;
+import com.objectexercise.objectexercise.repository.Entity.converter.JobApplicationStatusConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,14 +36,15 @@ public class JobApplicationEntity {
     private Integer resumeId;
 
     @Column(name = "status")
-    private String status = "SUBMITTED";
+    @Convert(converter = JobApplicationStatusConverter.class)
+    private ApplicationStatus status = ApplicationStatus.SUBMITTED;
 
     @CreationTimestamp
     @Column(name = "apply_date")
     private Timestamp applyDate;
 
     public void updateStatus(ApplicationStatus applicationStatus) {
-        this.status = applicationStatus.name();
+        this.status = applicationStatus;
     }
 
 }

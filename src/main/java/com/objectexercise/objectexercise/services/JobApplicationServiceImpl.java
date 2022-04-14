@@ -43,13 +43,13 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             throw new JobApplicationRuntimeException("resume is required or does not exist");
         }
         Integer resumeId = resume != null ? resume.getId() : null;
-        JobApplicationEntity jobApplicationEntityToSave = JobApplicationEntity.builder().jobId(jobId).employerId(job.getEmployer().getId()).status(ApplicationStatus.SUBMITTED.name()).jobseekerId(jobSeekerId).resumeId(resumeId).build();
+        JobApplicationEntity jobApplicationEntityToSave = JobApplicationEntity.builder().jobId(jobId).employerId(job.getEmployer().getId()).jobseekerId(jobSeekerId).resumeId(resumeId).build();
         JobApplicationEntity jobApplicationEntity = jobApplicationRepository.save(jobApplicationEntityToSave);
         return JobApplication.builder()
                 .id(jobApplicationEntity.getId())
                 .job(job)
                 .resume(resume)
-                .status(ApplicationStatus.valueOf(jobApplicationEntity.getStatus()))
+                .status(jobApplicationEntity.getStatus())
                 .applyDate(jobApplicationEntity.getApplyDate())
                 .build();
     }
@@ -71,7 +71,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
                 .id(applicationEntity.getId())
                 .job(job)
                 .resume(resume)
-                .status(ApplicationStatus.valueOf(applicationEntity.getStatus()))
+                .status(applicationEntity.getStatus())
                 .applyDate(applicationEntity.getApplyDate())
                 .build();
     }
@@ -86,13 +86,13 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         }
         List<JobApplicationEntity> jobApplications = jobApplicationRepository.findByJobId(jobId);
 
-        return jobApplications.stream().map(jobApplicationEntity -> JobApplication
+        return jobApplications.stream().map(applicationEntity -> JobApplication
                         .builder()
-                        .id(jobApplicationEntity.getId())
+                        .id(applicationEntity.getId())
                         .job(job)
-                        .resume(getResumeById(jobApplicationEntity.getResumeId()))
-                        .status(ApplicationStatus.valueOf(jobApplicationEntity.getStatus()))
-                        .applyDate(jobApplicationEntity.getApplyDate())
+                        .resume(getResumeById(applicationEntity.getResumeId()))
+                        .status(applicationEntity.getStatus())
+                        .applyDate(applicationEntity.getApplyDate())
                         .build())
                 .collect(Collectors.toList());
     }
