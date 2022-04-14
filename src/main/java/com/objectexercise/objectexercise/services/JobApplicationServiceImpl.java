@@ -3,8 +3,8 @@ package com.objectexercise.objectexercise.services;
 import com.objectexercise.objectexercise.controller.DTO.ApplicationStatus;
 import com.objectexercise.objectexercise.controller.DTO.JobType;
 import com.objectexercise.objectexercise.controller.requestDTO.JobApplicationForm;
-import com.objectexercise.objectexercise.exceptions.appUser.JobApplicationRuntimeException;
-import com.objectexercise.objectexercise.exceptions.appUser.UserRuntimeException;
+import com.objectexercise.objectexercise.exceptions.JobApplicationRuntimeException;
+import com.objectexercise.objectexercise.exceptions.UserRuntimeException;
 import com.objectexercise.objectexercise.model.*;
 import com.objectexercise.objectexercise.repository.Entity.JobApplicationEntity;
 import com.objectexercise.objectexercise.repository.Entity.ResumeEntity;
@@ -12,6 +12,7 @@ import com.objectexercise.objectexercise.repository.JobApplicationRepository;
 import com.objectexercise.objectexercise.repository.ResumeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -28,14 +29,12 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     private final ResumeRepository resumeRepository;
 
     @Override
+    @Transactional
     public JobApplication createJobApplication(JobApplicationForm jobApplicationForm) {
         Integer jobId = jobApplicationForm.getJobId();
         Job job = jobService.getJobById(jobId);
-        Integer jobSeekerId = jobApplicationForm.getJobSeekerId();
-        JobSeeker jobSeeker = jobSeekerService.getJobSeekerByCurrentUser();
-        if (!jobSeeker.getId().equals(jobSeekerId)) {
-            throw new JobApplicationRuntimeException("you can only submit your own job application with your own id");
-        }
+        Integer jobSeekerId = jobSeekerService.getJobSeekerByCurrentUser().getId();
+
         boolean isRequireResume = job.getType().equals(JobType.JREA);
         Optional<Resume> resumeOptional = jobSeekerService.getJobSeekerResumes(jobSeekerId).stream().filter(resume -> resume.getId().equals(jobApplicationForm.getResumeId())).findFirst();
         Resume resume = resumeOptional.orElse(null);
@@ -44,36 +43,22 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         }
         Integer resumeId = resume != null ? resume.getId() : null;
         JobApplicationEntity jobApplicationEntityToSave = JobApplicationEntity.builder().jobId(jobId).employerId(job.getEmployer().getId()).jobseekerId(jobSeekerId).resumeId(resumeId).build();
-        JobApplicationEntity jobApplicationEntity = jobApplicationRepository.save(jobApplicationEntityToSave);
-        return JobApplication.builder()
-                .id(jobApplicationEntity.getId())
-                .job(job)
-                .resume(resume)
-                .status(jobApplicationEntity.getStatus())
-                .applyDate(jobApplicationEntity.getApplyDate())
-                .build();
+        return JobApplication.fromEntity(jobApplicationRepository.save(jobApplicationEntityToSave), job, resume);
     }
 
     @Override
+    @Transactional
     public JobApplication updateApplicationStatus(Integer applicationId, ApplicationStatus applicationStatus) {
         AppUser currentLoginUser = userService.getCurrentLoginUser();
         Employer employer = userService.findEmployerByUserId(currentLoginUser.getId());
-        JobApplicationEntity jobApplicationEntity = jobApplicationRepository.findById(applicationId).orElseThrow(() -> new JobApplicationRuntimeException("applicaiton not found"));
+        JobApplicationEntity jobApplicationEntity = jobApplicationRepository.findById(applicationId).orElseThrow(() -> new JobApplicationRuntimeException("application not found"));
         if (!employer.getId().equals(jobApplicationEntity.getEmployerId())) {
             throw new UserRuntimeException("employer: have no authorization for this request");
         }
         Job job = jobService.getJobById(jobApplicationEntity.getJobId());
         Resume resume = getResumeById(jobApplicationEntity.getResumeId());
         jobApplicationEntity.updateStatus(applicationStatus);
-        JobApplicationEntity applicationEntity = jobApplicationRepository.save(jobApplicationEntity);
-        return JobApplication
-                .builder()
-                .id(applicationEntity.getId())
-                .job(job)
-                .resume(resume)
-                .status(applicationEntity.getStatus())
-                .applyDate(applicationEntity.getApplyDate())
-                .build();
+        return JobApplication.fromEntity(jobApplicationRepository.save(jobApplicationEntity), job, resume);
     }
 
     @Override
@@ -86,14 +71,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         }
         List<JobApplicationEntity> jobApplications = jobApplicationRepository.findByJobId(jobId);
 
-        return jobApplications.stream().map(applicationEntity -> JobApplication
-                        .builder()
-                        .id(applicationEntity.getId())
-                        .job(job)
-                        .resume(getResumeById(applicationEntity.getResumeId()))
-                        .status(applicationEntity.getStatus())
-                        .applyDate(applicationEntity.getApplyDate())
-                        .build())
+        return jobApplications.stream()
+                .map(applicationEntity -> JobApplication.fromEntity(applicationEntity, job, getResumeById(applicationEntity.getResumeId())))
                 .collect(Collectors.toList());
     }
 

@@ -1,4 +1,4 @@
-package com.objectexercise.objectexercise.exceptions.appUser;
+package com.objectexercise.objectexercise.exceptions;
 
 public class UserRuntimeException extends RuntimeException {
     public UserRuntimeException(String message){

@@ -1,9 +1,10 @@
 package com.objectexercise.objectexercise.services;
 
 import com.objectexercise.objectexercise.controller.DTO.UserRole;
-import com.objectexercise.objectexercise.exceptions.appUser.UserRuntimeException;
+import com.objectexercise.objectexercise.exceptions.UserRuntimeException;
 import com.objectexercise.objectexercise.model.AppUser;
 import com.objectexercise.objectexercise.model.Employer;
+import com.objectexercise.objectexercise.model.JobSeeker;
 import com.objectexercise.objectexercise.repository.EmployerRepository;
 import com.objectexercise.objectexercise.repository.Entity.EmployerEntity;
 import com.objectexercise.objectexercise.repository.Entity.JobSeekerEntity;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,14 +40,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String accountName) throws UsernameNotFoundException {
-        Optional<UserEntity> first = userRepository.findByAccountName(accountName);
-        if (!first.isPresent()) {
-            log.error("User does not exist in the database");
-            throw new UsernameNotFoundException("User does not exist in the database");
-        } else {
-            log.info("User found in the database: {}", accountName);
-        }
-        AppUser appUser = AppUser.fromEntity(first.get());
+        UserEntity userEntity = userRepository.findByAccountName(accountName).orElseThrow(() ->
+                new UsernameNotFoundException("User does not exist in the database"));
+        AppUser appUser = AppUser.fromEntity(userEntity);
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         appUser.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.name())));
         return new User(appUser.getAccountName(), appUser.getPassword(), authorities);
@@ -57,18 +52,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public AppUser createUser(AppUser appUser) {
-        if(appUser.getRoles().contains(UserRole.ADMIN)){
+        if (appUser.getRoles().contains(UserRole.ADMIN)) {
             throw new UserRuntimeException("unsupported admin user creation");
         }
-        if( userRepository.findByAccountName(appUser.getAccountName()).isPresent()){
+        if (userRepository.findByAccountName(appUser.getAccountName()).isPresent()) {
             throw new UserRuntimeException("account name already exist");
         }
         appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         UserEntity userEntity = userRepository.save(appUser.toEntity());
-        if(appUser.getRoles().contains(UserRole.APPLICANT)){
+        if (appUser.getRoles().contains(UserRole.APPLICANT)) {
             jobSeekerRepository.save(JobSeekerEntity.builder().userId(userEntity.getId()).name(userEntity.getName()).build());
         }
-        if(appUser.getRoles().contains(UserRole.RECRUITER)){
+        if (appUser.getRoles().contains(UserRole.RECRUITER)) {
             employerRepository.save(EmployerEntity.builder().userId(userEntity.getId()).name(userEntity.getName()).build());
         }
         return AppUser.fromEntity(userEntity);
@@ -77,11 +72,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public AppUser getCurrentLoginUser() {
         String accountName = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<UserEntity> userEntityOptional = userRepository.findByAccountName(accountName);
-        if(!userEntityOptional.isPresent()){
-            throw new UserRuntimeException("account: ["+ accountName +"] does not exist!");
-        }
-        return AppUser.fromEntity(userEntityOptional.get());
+        UserEntity userEntity = userRepository.findByAccountName(accountName)
+                .orElseThrow(() -> new UserRuntimeException("account: [" + accountName + "] does not exist!"));
+        return AppUser.fromEntity(userEntity);
     }
 
     @Override
@@ -91,20 +84,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public AppUser findUserById(Integer userId) {
-        Optional<UserEntity> user = userRepository.findById(userId);
-        if(!user.isPresent()){
-            throw new UserRuntimeException("userId: ["+ userId +"] does not exist!");
-        }
-        return AppUser.fromEntity(user.get());
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserRuntimeException("userId: [" + userId + "] does not exist!"));
+        return AppUser.fromEntity(user);
+    }
+
+    @Override
+    public JobSeeker findJobseekerByUserId(Integer userId) {
+        JobSeekerEntity jobSeekerEntity = jobSeekerRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserRuntimeException("jobseeker with userId: [" + userId + "] does not exist!"));
+        return JobSeeker.fromEntity(jobSeekerEntity);
     }
 
     @Override
     public Employer findEmployerByUserId(Integer userId) {
-        Optional<EmployerEntity> optionalEmployerEntity = employerRepository.findByUserId(userId);
-        if(!optionalEmployerEntity.isPresent()){
-            throw new UserRuntimeException("employer with userId: ["+ userId +"] does not exist!");
-        }
-        return Employer.fromEntity(optionalEmployerEntity.get());
+        EmployerEntity employerEntity = employerRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserRuntimeException("employer with userId: [" + userId + "] does not exist!"));
+        return Employer.fromEntity(employerEntity);
     }
 
 }

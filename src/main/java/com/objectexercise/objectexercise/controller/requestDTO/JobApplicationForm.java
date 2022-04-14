@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,9 +12,6 @@ import javax.validation.constraints.NotNull;
 public class JobApplicationForm {
 
     private Integer jobId;
-
-    @NotNull(message = "job seeker id must not be null")
-    private Integer jobSeekerId;
 
     private Integer resumeId;
 }

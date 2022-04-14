@@ -1,4 +1,4 @@
-package com.objectexercise.objectexercise.exceptions.appUser;
+package com.objectexercise.objectexercise.exceptions;
 
 public class JobApplicationRuntimeException extends RuntimeException {
     public JobApplicationRuntimeException(String message) {

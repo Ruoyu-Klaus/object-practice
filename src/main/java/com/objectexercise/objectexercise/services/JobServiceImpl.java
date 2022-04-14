@@ -1,6 +1,6 @@
 package com.objectexercise.objectexercise.services;
 
-import com.objectexercise.objectexercise.exceptions.appUser.JobApplicationRuntimeException;
+import com.objectexercise.objectexercise.exceptions.JobApplicationRuntimeException;
 import com.objectexercise.objectexercise.model.AppUser;
 import com.objectexercise.objectexercise.model.Employer;
 import com.objectexercise.objectexercise.model.Job;

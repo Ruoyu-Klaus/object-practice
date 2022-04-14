@@ -1,6 +1,6 @@
 package com.objectexercise.objectexercise.services;
 
-import com.objectexercise.objectexercise.exceptions.appUser.UserRuntimeException;
+import com.objectexercise.objectexercise.exceptions.UserRuntimeException;
 import com.objectexercise.objectexercise.model.AppUser;
 import com.objectexercise.objectexercise.model.JobSeeker;
 import com.objectexercise.objectexercise.model.Resume;
@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class JobSeekerServiceImpl implements JobSeekerService {
@@ -25,11 +25,8 @@ public class JobSeekerServiceImpl implements JobSeekerService {
     @Override
     public JobSeeker getJobSeekerByCurrentUser() {
         AppUser currentLoginUser = userService.getCurrentLoginUser();
-        Optional<JobSeekerEntity> jobSeeker = jobSeekerRepository.findByUserId(currentLoginUser.getId());
-        if (!jobSeeker.isPresent()) {
-            throw new UserRuntimeException("you are not job seeker");
-        }
-        return JobSeeker.fromEntity(jobSeeker.get());
+        JobSeekerEntity jobSeeker = jobSeekerRepository.findByUserId(currentLoginUser.getId()).orElseThrow(()->new UserRuntimeException("you are not a job seeker"));
+        return JobSeeker.fromEntity(jobSeeker);
     }
 
     @Override
@@ -53,11 +50,8 @@ public class JobSeekerServiceImpl implements JobSeekerService {
 
     @Override
     public List<Resume> getJobSeekerResumes(Integer jobSeekerId) {
-        Optional<JobSeekerEntity> jobSeekerEntity = jobSeekerRepository.findById(jobSeekerId);
-        if (!jobSeekerEntity.isPresent()) {
-            throw new UserRuntimeException("you are not job seeker");
-        }
-        JobSeeker jobSeeker = JobSeeker.fromEntity(jobSeekerEntity.get());
+        JobSeekerEntity jobSeekerEntity = jobSeekerRepository.findById(jobSeekerId).orElseThrow(() -> new UserRuntimeException("you are not a job seeker"));
+        JobSeeker jobSeeker = JobSeeker.fromEntity(jobSeekerEntity);
         return resumeRepository.findByJobSeekerId(jobSeekerId).stream().map(resumeEntity -> Resume.fromEntity(resumeEntity, jobSeeker)).collect(Collectors.toList());
     }
 
