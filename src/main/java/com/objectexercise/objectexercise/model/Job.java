@@ -2,7 +2,7 @@ package com.objectexercise.objectexercise.model;
 
 import com.objectexercise.objectexercise.controller.DTO.JobType;
 import com.objectexercise.objectexercise.controller.requestDTO.JobCreationForm;
-import com.objectexercise.objectexercise.repository.Entity.EmployerEntity;
+import com.objectexercise.objectexercise.controller.responseDTO.JobResponse;
 import com.objectexercise.objectexercise.repository.Entity.JobEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +28,16 @@ public class Job {
 
     public static Job fromDTO(JobCreationForm JobRequest) {
         return Job.builder().title(JobRequest.getTitle()).type(JobRequest.getType()).build();
+    }
+
+    public JobResponse toJobDTO(){
+        return JobResponse.builder()
+                .id(id)
+                .title(title)
+                .type(type)
+                .employer(employer.toDTO())
+                .postDate(postDate)
+                .build();
     }
 
     public static Job fromEntity(JobEntity jobEntity, Employer employer) {

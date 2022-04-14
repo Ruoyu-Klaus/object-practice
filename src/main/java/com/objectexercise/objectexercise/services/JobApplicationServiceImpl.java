@@ -4,25 +4,28 @@ import com.objectexercise.objectexercise.controller.DTO.ApplicationStatus;
 import com.objectexercise.objectexercise.controller.DTO.JobType;
 import com.objectexercise.objectexercise.controller.requestDTO.JobApplicationForm;
 import com.objectexercise.objectexercise.exceptions.appUser.JobApplicationRuntimeException;
-import com.objectexercise.objectexercise.model.Job;
-import com.objectexercise.objectexercise.model.JobApplication;
-import com.objectexercise.objectexercise.model.JobSeeker;
-import com.objectexercise.objectexercise.model.Resume;
+import com.objectexercise.objectexercise.exceptions.appUser.UserRuntimeException;
+import com.objectexercise.objectexercise.model.*;
 import com.objectexercise.objectexercise.repository.Entity.JobApplicationEntity;
+import com.objectexercise.objectexercise.repository.Entity.ResumeEntity;
 import com.objectexercise.objectexercise.repository.JobApplicationRepository;
 import com.objectexercise.objectexercise.repository.ResumeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class JobApplicationServiceImpl implements JobApplicationService {
-    final JobService jobService;
-    final JobSeekerService jobSeekerService;
-    final JobApplicationRepository jobApplicationRepository;
-    final ResumeRepository resumeRepository;
+    private final UserService userService;
+    private final JobService jobService;
+    private final JobSeekerService jobSeekerService;
+    private final JobApplicationRepository jobApplicationRepository;
+    private final ResumeRepository resumeRepository;
 
     @Override
     public JobApplication createJobApplication(JobApplicationForm jobApplicationForm) {
@@ -44,11 +47,37 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         JobApplicationEntity jobApplicationEntity = jobApplicationRepository.save(jobApplicationEntityToSave);
         return JobApplication.builder()
                 .id(jobApplicationEntity.getId())
-                .jobSeeker(jobSeeker)
                 .job(job)
                 .resume(resume)
                 .status(ApplicationStatus.valueOf(jobApplicationEntity.getStatus()))
                 .applyDate(jobApplicationEntity.getApplyDate())
                 .build();
+    }
+
+    @Override
+    public List<JobApplication> getJobApplications(Integer jobId) {
+        Job job = jobService.getJobById(jobId);
+        AppUser currentLoginUser = userService.getCurrentLoginUser();
+        Employer employer = userService.findEmployerByUserId(currentLoginUser.getId());
+        if (!Objects.equals(job.getEmployer().getId(), employer.getId())) {
+            throw new UserRuntimeException("employer: [" + employer.getName() + "] have no authorization for this request");
+        }
+        List<JobApplicationEntity> jobApplications = jobApplicationRepository.findByJobId(jobId);
+
+        return jobApplications.stream().map(jobApplicationEntity -> JobApplication
+                        .builder()
+                        .id(jobApplicationEntity.getId())
+                        .job(job)
+                        .resume(getResumeById(jobApplicationEntity.getResumeId()))
+                        .status(ApplicationStatus.valueOf(jobApplicationEntity.getStatus()))
+                        .applyDate(jobApplicationEntity.getApplyDate())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private Resume getResumeById(Integer resumeId) {
+        ResumeEntity resumeEntity = resumeRepository.findById(resumeId).orElseThrow(() -> new RuntimeException("resume does not exist"));
+        JobSeeker jobSeeker = jobSeekerService.getJobSeekerById(resumeEntity.getJobSeekerId());
+        return Resume.fromEntity(resumeEntity, jobSeeker);
     }
 }

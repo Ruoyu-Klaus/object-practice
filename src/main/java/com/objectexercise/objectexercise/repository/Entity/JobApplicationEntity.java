@@ -1,11 +1,11 @@
 package com.objectexercise.objectexercise.repository.Entity;
 
+import com.objectexercise.objectexercise.controller.DTO.ApplicationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -34,11 +34,15 @@ public class JobApplicationEntity {
     @Column(name = "resume_id")
     private Integer resumeId;
 
-    @Column(name = "status", columnDefinition = "VARCHAR(64) DEFAULT 'SUBMITTED'")
+    @Column(name = "status")
     private String status = "SUBMITTED";
 
     @CreationTimestamp
     @Column(name = "apply_date")
     private Timestamp applyDate;
+
+    public void updateStatus(ApplicationStatus applicationStatus) {
+        this.status = applicationStatus.name();
+    }
 
 }

@@ -25,10 +25,10 @@ public class JobEntity {
 
     private String type;
 
-    @Column(name = "employer_id")
+    @Column()
     private Integer employerId;
 
-    @Column(name = "post_date")
+    @Column()
     @CreationTimestamp
     private Timestamp postDate;
 }

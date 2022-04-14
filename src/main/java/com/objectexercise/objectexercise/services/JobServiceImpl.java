@@ -1,5 +1,6 @@
 package com.objectexercise.objectexercise.services;
 
+import com.objectexercise.objectexercise.exceptions.appUser.JobApplicationRuntimeException;
 import com.objectexercise.objectexercise.model.AppUser;
 import com.objectexercise.objectexercise.model.Employer;
 import com.objectexercise.objectexercise.model.Job;
@@ -26,10 +27,9 @@ public class JobServiceImpl implements JobService {
     public Job getJobById(Integer jobId) {
         Optional<JobEntity> jobEntityOptional = jobRepository.findById(jobId);
         if (!jobEntityOptional.isPresent()) {
-            throw new RuntimeException("Job not found with id" + jobId);
+            throw new JobApplicationRuntimeException("Job not found with id: " + jobId);
         }
         JobEntity jobEntity = jobEntityOptional.get();
-        AppUser currentLoginUser = userService.getCurrentLoginUser();
         EmployerEntity employerEntity = employerRepository.findById(jobEntity.getEmployerId()).orElseThrow(() -> new RuntimeException("employer does not exist"));
         Employer employer = Employer.fromEntity(employerEntity);
         return Job.fromEntity(jobEntityOptional.get(), employer);

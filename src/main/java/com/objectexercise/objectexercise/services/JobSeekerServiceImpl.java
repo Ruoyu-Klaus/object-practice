@@ -34,6 +34,11 @@ public class JobSeekerServiceImpl implements JobSeekerService {
     }
 
     @Override
+    public JobSeeker getJobSeekerById(Integer jobSeekerId) {
+        return JobSeeker.fromEntity(jobSeekerRepository.getById(jobSeekerId));
+    }
+
+    @Override
     public Resume createResume(Resume resume) {
         JobSeeker jobSeeker = getJobSeekerByCurrentUser();
         resume.setJobSeeker(jobSeeker);

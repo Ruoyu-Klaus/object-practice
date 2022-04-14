@@ -18,8 +18,6 @@ public class JobApplication {
 
     private Job job;
 
-    private JobSeeker jobSeeker;
-
     private Resume resume;
 
     private ApplicationStatus status;

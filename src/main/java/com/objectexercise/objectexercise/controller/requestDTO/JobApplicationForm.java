@@ -13,9 +13,9 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class JobApplicationForm {
 
-    @NotNull(message = "jobId must not be null")
     private Integer jobId;
 
+    @NotNull(message = "job seeker id must not be null")
     private Integer jobSeekerId;
 
     private Integer resumeId;

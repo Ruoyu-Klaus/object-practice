@@ -28,7 +28,7 @@ public class Resume {
         return ResumeResponse.builder().id(id).name(name).jobSeeker(jobSeeker.toDTO()).build();
     }
 
-    public static Resume fromEntity(ResumeEntity resumeEntity,JobSeeker jobSeeker){
+    public static Resume fromEntity(ResumeEntity resumeEntity, JobSeeker jobSeeker){
         return Resume.builder().id(resumeEntity.getId()).name(resumeEntity.getName()).jobSeeker(jobSeeker).build();
     }
 

@@ -9,6 +9,8 @@ public interface JobSeekerService {
 
     JobSeeker getJobSeekerByCurrentUser();
 
+    JobSeeker getJobSeekerById(Integer jobSeekerId);
+
     Resume createResume(Resume resume);
 
     List<Resume> getJobSeekerResumes();
