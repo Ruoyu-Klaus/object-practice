@@ -24,11 +24,8 @@ public class GlobalExceptionHandler {
         List<ApiErrorResponse> errorResponses = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
-                .map(error -> ApiErrorResponse
-                        .builder()
-                        .message(error.getDefaultMessage())
-                        .status(BAD_REQUEST)
-                        .build())
+                .map(error -> new ApiErrorResponse(BAD_REQUEST, error.getDefaultMessage())
+                )
                 .collect(Collectors.toList());
         return ResponseEntity.status(BAD_REQUEST).body(errorResponses);
     }
@@ -40,19 +37,13 @@ public class GlobalExceptionHandler {
             JobException.class,
             ResumeException.class})
     public ResponseEntity<ApiErrorResponse> handle(JobApplicationRuntimeException ex) {
-        ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-                .message(ex.getMessage())
-                .status(BAD_REQUEST)
-                .build();
+        ApiErrorResponse errorResponse = new ApiErrorResponse(BAD_REQUEST, ex.getMessage());
         return ResponseEntity.status(BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiErrorResponse> handle(RuntimeException ex) {
-        ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-                .message(ex.getMessage())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .build();
+        ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }
