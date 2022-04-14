@@ -1,6 +1,7 @@
 package com.objectexercise.objectexercise.controller;
 
 import com.objectexercise.objectexercise.controller.requestDTO.JobApplicationForm;
+import com.objectexercise.objectexercise.controller.requestDTO.JobApplicationStatusUpdate;
 import com.objectexercise.objectexercise.controller.requestDTO.JobCreationForm;
 import com.objectexercise.objectexercise.controller.responseDTO.JobResponse;
 import com.objectexercise.objectexercise.model.Job;
@@ -28,7 +29,7 @@ public class JobController {
 
     @GetMapping("/{jobId}")
     public JobResponse getJobByJobId(@PathVariable String jobId) {
-       return jobService.getJobById(Integer.parseInt(jobId)).toJobDTO();
+        return jobService.getJobById(Integer.parseInt(jobId)).toJobDTO();
     }
 
     @PostMapping("")
@@ -45,5 +46,10 @@ public class JobController {
     public JobApplication applyJob(@PathVariable String jobId, @RequestBody @Validated JobApplicationForm applicationForm) {
         applicationForm.setJobId(Integer.parseInt(jobId));
         return applicationService.createJobApplication(applicationForm);
+    }
+
+    @PatchMapping("/{jobId}/applications/{applicationId}")
+    public JobApplication updateStatus(@PathVariable String applicationId, @RequestBody JobApplicationStatusUpdate status) {
+        return applicationService.updateApplicationStatus(Integer.parseInt(applicationId), status.getApplicationStatus());
     }
 }

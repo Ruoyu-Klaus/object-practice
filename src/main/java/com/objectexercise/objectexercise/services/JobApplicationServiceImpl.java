@@ -55,6 +55,28 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     }
 
     @Override
+    public JobApplication updateApplicationStatus(Integer applicationId, ApplicationStatus applicationStatus) {
+        AppUser currentLoginUser = userService.getCurrentLoginUser();
+        Employer employer = userService.findEmployerByUserId(currentLoginUser.getId());
+        JobApplicationEntity jobApplicationEntity = jobApplicationRepository.findById(applicationId).orElseThrow(() -> new JobApplicationRuntimeException("applicaiton not found"));
+        if (!employer.getId().equals(jobApplicationEntity.getEmployerId())) {
+            throw new UserRuntimeException("employer: have no authorization for this request");
+        }
+        Job job = jobService.getJobById(jobApplicationEntity.getJobId());
+        Resume resume = getResumeById(jobApplicationEntity.getResumeId());
+        jobApplicationEntity.updateStatus(applicationStatus);
+        JobApplicationEntity applicationEntity = jobApplicationRepository.save(jobApplicationEntity);
+        return JobApplication
+                .builder()
+                .id(applicationEntity.getId())
+                .job(job)
+                .resume(resume)
+                .status(ApplicationStatus.valueOf(applicationEntity.getStatus()))
+                .applyDate(applicationEntity.getApplyDate())
+                .build();
+    }
+
+    @Override
     public List<JobApplication> getJobApplications(Integer jobId) {
         Job job = jobService.getJobById(jobId);
         AppUser currentLoginUser = userService.getCurrentLoginUser();
