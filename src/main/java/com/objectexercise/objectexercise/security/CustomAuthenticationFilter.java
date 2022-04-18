@@ -1,6 +1,7 @@
 package com.objectexercise.objectexercise.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.objectexercise.objectexercise.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             TokenDTO token = TokenDTO.builder().access_token(access_token).build();
-            response.getWriter().write(new ObjectMapper().writeValueAsString(token));
+            response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(token));
         } catch (IOException e) {
             response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }

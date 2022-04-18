@@ -19,6 +19,12 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
     final HttpStatus BAD_REQUEST = HttpStatus.BAD_REQUEST;
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiErrorResponse> handle(RuntimeException ex) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ApiErrorResponse>> handle(MethodArgumentNotValidException ex) {
         List<ApiErrorResponse> errorResponses = ex.getBindingResult()
@@ -41,9 +47,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST).body(errorResponse);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiErrorResponse> handle(RuntimeException ex) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }
 }

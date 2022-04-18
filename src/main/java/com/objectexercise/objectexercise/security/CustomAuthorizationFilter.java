@@ -1,6 +1,8 @@
 package com.objectexercise.objectexercise.security;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.objectexercise.objectexercise.controller.responseDTO.ApiErrorResponse;
 import com.objectexercise.objectexercise.utils.JwtUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,11 +23,11 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if(request.getRequestURI().equals("/login")){
-            filterChain.doFilter(request,response);
-        }else{
+        if (request.getRequestURI().equals("/login")) {
+            filterChain.doFilter(request, response);
+        } else {
             String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-            if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
                     String token = authorizationHeader.substring("Bearer ".length());
                     DecodedJWT decodedJWT = JwtUtil.verify(token);
@@ -33,17 +35,19 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
                     for (String role : roles) {
-                         authorities.add(new SimpleGrantedAuthority(role));
+                        authorities.add(new SimpleGrantedAuthority(role));
                     }
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username,null,authorities);
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                    filterChain.doFilter(request,response);
-                }catch (Exception e){
-                    response.setHeader("error",e.getMessage());
-                    response.sendError(HttpStatus.FORBIDDEN.value());
+                    filterChain.doFilter(request, response);
+                } catch (RuntimeException ex) {
+                    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.setContentType("application/json");
+                    response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
                 }
-            }else {
-                filterChain.doFilter(request,response);
+            } else {
+                filterChain.doFilter(request, response);
             }
         }
     }
