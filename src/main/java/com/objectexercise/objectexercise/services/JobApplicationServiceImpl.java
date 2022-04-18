@@ -8,9 +8,7 @@ import com.objectexercise.objectexercise.exceptions.ResumeException;
 import com.objectexercise.objectexercise.exceptions.UserRuntimeException;
 import com.objectexercise.objectexercise.model.*;
 import com.objectexercise.objectexercise.repository.Entity.JobApplicationEntity;
-import com.objectexercise.objectexercise.repository.Entity.ResumeEntity;
 import com.objectexercise.objectexercise.repository.JobApplicationRepository;
-import com.objectexercise.objectexercise.repository.ResumeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +24,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     private final UserService userService;
     private final JobService jobService;
     private final JobSeekerService jobSeekerService;
+    private final ResumeService resumeService;
     private final JobApplicationRepository jobApplicationRepository;
-    private final ResumeRepository resumeRepository;
 
     @Override
     @Transactional
@@ -57,7 +55,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             throw UserRuntimeException.AuthorizationError();
         }
         Job job = jobService.getJobById(jobApplicationEntity.getJobId());
-        Resume resume = getResumeById(jobApplicationEntity.getResumeId());
+        Resume resume = resumeService.getResumeById(jobApplicationEntity.getResumeId());
         jobApplicationEntity.updateStatus(applicationStatus);
         return JobApplication.fromEntity(jobApplicationRepository.save(jobApplicationEntity), job, resume);
     }
@@ -73,13 +71,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         List<JobApplicationEntity> jobApplications = jobApplicationRepository.findByJobId(jobId);
 
         return jobApplications.stream()
-                .map(applicationEntity -> JobApplication.fromEntity(applicationEntity, job, getResumeById(applicationEntity.getResumeId())))
+                .map(applicationEntity -> JobApplication.fromEntity(applicationEntity, job, resumeService.getResumeById(applicationEntity.getResumeId())))
                 .collect(Collectors.toList());
-    }
-
-    private Resume getResumeById(Integer resumeId) {
-        ResumeEntity resumeEntity = resumeRepository.findById(resumeId).orElseThrow(ResumeException::ResumeNotFound);
-        JobSeeker jobSeeker = jobSeekerService.getJobSeekerById(resumeEntity.getJobSeekerId());
-        return Resume.fromEntity(resumeEntity, jobSeeker);
     }
 }
