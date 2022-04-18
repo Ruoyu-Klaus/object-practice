@@ -27,6 +27,16 @@ public class JobController {
         return jobService.getAllJobs().stream().map(Job::toJobDTO).collect(Collectors.toList());
     }
 
+    @GetMapping("/bookmarks")
+    public List<JobResponse> getSavedJobs() {
+        return jobService.getSavedJobs().stream().map(Job::toJobDTO).collect(Collectors.toList());
+    }
+
+    @PostMapping("/bookmarks/{jobId}")
+    public JobResponse saveJobToBookmarks(@PathVariable String jobId) {
+        return jobService.saveJobToUser(Integer.parseInt(jobId)).toJobDTO();
+    }
+
     @GetMapping("/{jobId}")
     public JobResponse getJobByJobId(@PathVariable String jobId) {
         return jobService.getJobById(Integer.parseInt(jobId)).toJobDTO();
@@ -37,10 +47,6 @@ public class JobController {
         return jobService.createJob(Job.fromDTO(form)).toJobDTO();
     }
 
-    @PostMapping("/{jobId}")
-    public JobResponse saveJob(@PathVariable String jobId) {
-        return jobService.saveJobToUser(Integer.parseInt(jobId)).toJobDTO();
-    }
 
     @GetMapping(value = "/{jobId}/applications")
     public List<JobApplication> getJobApplications(@PathVariable String jobId) {

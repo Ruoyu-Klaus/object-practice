@@ -13,8 +13,6 @@ public interface UserService {
 
     List<AppUser> findAllUsers();
 
-    AppUser findUserById(Integer userId);
-
     JobSeeker findJobSeekerByUserId(Integer userId);
 
     Employer findEmployerByUserId(Integer userId);

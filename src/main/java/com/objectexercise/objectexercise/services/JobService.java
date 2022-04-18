@@ -12,5 +12,7 @@ public interface JobService {
 
     Job createJob(Job jobPosition);
 
-    Job saveJobToUser(int parseInt);
+    Job saveJobToUser(int jobId);
+    
+    List<Job> getSavedJobs();
 }

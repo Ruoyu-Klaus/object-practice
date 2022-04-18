@@ -2,7 +2,6 @@ package com.objectexercise.objectexercise.services;
 
 import com.objectexercise.objectexercise.exceptions.JobException;
 import com.objectexercise.objectexercise.exceptions.UserRuntimeException;
-import com.objectexercise.objectexercise.model.AppUser;
 import com.objectexercise.objectexercise.model.Employer;
 import com.objectexercise.objectexercise.model.Job;
 import com.objectexercise.objectexercise.model.JobSeeker;
@@ -45,23 +44,29 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Job createJob(Job jobPosition) {
-        AppUser currentLoginUser = userService.getCurrentLoginUser();
-        Employer employer = userService.findEmployerByUserId(currentLoginUser.getId());
+        Employer employer = userService.findEmployerByUserId(userService.getCurrentLoginUser().getId());
         jobPosition.setEmployer(employer);
         return Job.fromEntity(jobRepository.save(jobPosition.toEntity()), employer);
     }
 
     @Override
     public Job saveJobToUser(int jobId) {
-        AppUser currentLoginUser = userService.getCurrentLoginUser();
-        JobSeeker jobSeeker = userService.findJobSeekerByUserId(currentLoginUser.getId());
+        JobSeeker jobSeeker = userService.findJobSeekerByUserId(userService.getCurrentLoginUser().getId());
         Job job = getJobById(jobId);
         JobSeekerSavedJobEntity jobSeekerSavedJobEntity = JobSeekerSavedJobEntity.builder().jobId(jobId).jobseekerId(jobSeeker.getId()).build();
-        if (jobSeekerSavedRepository.findByJobIdAndJobseekerId(jobId, jobSeeker.getId()).isPresent()){
+        if (jobSeekerSavedRepository.findByJobIdAndJobseekerId(jobId, jobSeeker.getId()).isPresent()) {
             throw JobException.JobHasSaved();
         }
         jobSeekerSavedRepository.save(jobSeekerSavedJobEntity);
         return job;
     }
 
+    @Override
+    public List<Job> getSavedJobs() {
+        JobSeeker jobSeeker = userService.findJobSeekerByUserId(userService.getCurrentLoginUser().getId());
+        return jobRepository.findAllSavedJobsByJobSeekerId(jobSeeker.getId())
+                .stream()
+                .map(jobEntity -> Job.fromEntity(jobEntity, Employer.fromEntity(Objects.requireNonNull(employerRepository.findById(jobEntity.getEmployerId()).orElse(null)))))
+                .collect(Collectors.toList());
+    }
 }

@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface JobSeekerSavedRepository extends JpaRepository<JobSeekerSavedJobEntity,Integer> {
 
     Optional<JobSeekerSavedJobEntity> findByJobIdAndJobseekerId(Integer jobId,Integer JobseekerId);
+
 }

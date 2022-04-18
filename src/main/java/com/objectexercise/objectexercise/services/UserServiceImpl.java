@@ -81,14 +81,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public List<AppUser> findAllUsers() {
         return userRepository.findAll().stream().map(AppUser::fromEntity).collect(Collectors.toList());
     }
-
-    @Override
-    public AppUser findUserById(Integer userId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(UserRuntimeException::UserNotFound);
-        return AppUser.fromEntity(user);
-    }
-
+    
     @Override
     public JobSeeker findJobSeekerByUserId(Integer userId) {
         JobSeekerEntity jobSeekerEntity = jobSeekerRepository.findByUserId(userId)
