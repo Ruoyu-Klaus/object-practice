@@ -10,4 +10,8 @@ public class JobException extends RuntimeException {
         return new JobException("Job not found");
     }
 
+    public static JobException JobHasSaved() {
+        return new JobException("Job has been saved");
+    }
+
 }

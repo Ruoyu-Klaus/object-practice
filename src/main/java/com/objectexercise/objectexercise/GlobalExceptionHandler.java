@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
             JobApplicationRuntimeException.class,
             JobException.class,
             ResumeException.class})
-    public ResponseEntity<ApiErrorResponse> handle(JobApplicationRuntimeException ex) {
+    public ResponseEntity<ApiErrorResponse> handle(Exception ex) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(BAD_REQUEST, ex.getMessage());
         return ResponseEntity.status(BAD_REQUEST).body(errorResponse);
     }

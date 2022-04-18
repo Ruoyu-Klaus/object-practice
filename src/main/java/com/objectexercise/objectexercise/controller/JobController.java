@@ -37,6 +37,11 @@ public class JobController {
         return jobService.createJob(Job.fromDTO(form)).toJobDTO();
     }
 
+    @PostMapping("/{jobId}")
+    public JobResponse saveJob(@PathVariable String jobId) {
+        return jobService.saveJobToUser(Integer.parseInt(jobId)).toJobDTO();
+    }
+
     @GetMapping(value = "/{jobId}/applications")
     public List<JobApplication> getJobApplications(@PathVariable String jobId) {
         return applicationService.getJobApplications(Integer.parseInt(jobId));

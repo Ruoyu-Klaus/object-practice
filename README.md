@@ -7,15 +7,15 @@
 - Job Applications
 
 ### Interaction
-1. Employers can post jobs
-2. Employers can check job list they post
-3. Jobseekers can apply jobs posted by employers
-4. Employers can post two types of jobs --- JReq and ATS
-5. JReq needs resume for application
-6. ATS is needless resume for application
-7. Jobseekers cannot use other's resume for application
-8. Jobseekers can use different resumes for different jobs
-9. Jobseekers can save jobs for future use
+1. [x] Employers can post jobs
+2. [x] Employers can check job list they post
+3. [x] Jobseekers can apply jobs posted by employers
+4. [x] Employers can post two types of jobs --- JReq and ATS
+5. [x] JReq needs resume for application
+6. [x] ATS is needless resume for application
+7. [x] Jobseekers cannot use other's resume for application
+8. [x] Jobseekers can use different resumes for different jobs
+9. [X] Jobseekers can save jobs for future use
 10. Jobseekers can check jobs they applied and filtered by given apply date
 11. Employers can get jobseeker list by apply date or job they posted
 12. System can handle multiple jobs with same name

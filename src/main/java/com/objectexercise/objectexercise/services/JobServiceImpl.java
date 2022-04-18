@@ -5,10 +5,13 @@ import com.objectexercise.objectexercise.exceptions.UserRuntimeException;
 import com.objectexercise.objectexercise.model.AppUser;
 import com.objectexercise.objectexercise.model.Employer;
 import com.objectexercise.objectexercise.model.Job;
+import com.objectexercise.objectexercise.model.JobSeeker;
 import com.objectexercise.objectexercise.repository.EmployerRepository;
 import com.objectexercise.objectexercise.repository.Entity.EmployerEntity;
 import com.objectexercise.objectexercise.repository.Entity.JobEntity;
+import com.objectexercise.objectexercise.repository.Entity.JobSeekerSavedJobEntity;
 import com.objectexercise.objectexercise.repository.JobRepository;
+import com.objectexercise.objectexercise.repository.JobSeekerSavedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +22,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class JobServiceImpl implements JobService {
+    private final UserService userService;
     private final JobRepository jobRepository;
     private final EmployerRepository employerRepository;
-    private final UserService userService;
+    private final JobSeekerSavedRepository jobSeekerSavedRepository;
 
     @Override
     public Job getJobById(Integer jobId) {
@@ -45,6 +49,19 @@ public class JobServiceImpl implements JobService {
         Employer employer = userService.findEmployerByUserId(currentLoginUser.getId());
         jobPosition.setEmployer(employer);
         return Job.fromEntity(jobRepository.save(jobPosition.toEntity()), employer);
+    }
+
+    @Override
+    public Job saveJobToUser(int jobId) {
+        AppUser currentLoginUser = userService.getCurrentLoginUser();
+        JobSeeker jobSeeker = userService.findJobSeekerByUserId(currentLoginUser.getId());
+        Job job = getJobById(jobId);
+        JobSeekerSavedJobEntity jobSeekerSavedJobEntity = JobSeekerSavedJobEntity.builder().jobId(jobId).jobseekerId(jobSeeker.getId()).build();
+        if (jobSeekerSavedRepository.findByJobIdAndJobseekerId(jobId, jobSeeker.getId()).isPresent()){
+            throw JobException.JobHasSaved();
+        }
+        jobSeekerSavedRepository.save(jobSeekerSavedJobEntity);
+        return job;
     }
 
 }
