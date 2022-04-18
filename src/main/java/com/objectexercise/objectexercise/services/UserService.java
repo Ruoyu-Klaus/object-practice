@@ -15,7 +15,7 @@ public interface UserService {
 
     AppUser findUserById(Integer userId);
 
-    JobSeeker findJobseekerByUserId(Integer userId);
+    JobSeeker findJobSeekerByUserId(Integer userId);
 
     Employer findEmployerByUserId(Integer userId);
 }

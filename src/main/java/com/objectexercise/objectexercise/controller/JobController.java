@@ -37,7 +37,7 @@ public class JobController {
         return jobService.createJob(Job.fromDTO(form)).toJobDTO();
     }
 
-    @GetMapping("/{jobId}/applications")
+    @GetMapping(value = "/{jobId}/applications")
     public List<JobApplication> getJobApplications(@PathVariable String jobId) {
         return applicationService.getJobApplications(Integer.parseInt(jobId));
     }
@@ -49,7 +49,7 @@ public class JobController {
     }
 
     @PatchMapping("/{jobId}/applications/{applicationId}")
-    public JobApplication updateStatus(@PathVariable String applicationId, @RequestBody JobApplicationStatusUpdate status) {
+    public JobApplication updateStatus(@PathVariable String applicationId, @RequestBody JobApplicationStatusUpdate status, @PathVariable String jobId) {
         return applicationService.updateApplicationStatus(Integer.parseInt(applicationId), status.getApplicationStatus());
     }
 }

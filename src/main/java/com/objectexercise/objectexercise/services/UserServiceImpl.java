@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public AppUser getCurrentLoginUser() {
         String accountName = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userRepository.findByAccountName(accountName)
-                .orElseThrow(() -> new UserRuntimeException("account: [" + accountName + "] does not exist!"));
+                .orElseThrow(UserRuntimeException::UserNotFound);
         return AppUser.fromEntity(userEntity);
     }
 
@@ -85,21 +85,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public AppUser findUserById(Integer userId) {
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserRuntimeException("userId: [" + userId + "] does not exist!"));
+                .orElseThrow(UserRuntimeException::UserNotFound);
         return AppUser.fromEntity(user);
     }
 
     @Override
-    public JobSeeker findJobseekerByUserId(Integer userId) {
+    public JobSeeker findJobSeekerByUserId(Integer userId) {
         JobSeekerEntity jobSeekerEntity = jobSeekerRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserRuntimeException("jobseeker with userId: [" + userId + "] does not exist!"));
+                .orElseThrow(UserRuntimeException::JobSeekerNotFound);
         return JobSeeker.fromEntity(jobSeekerEntity);
     }
 
     @Override
     public Employer findEmployerByUserId(Integer userId) {
         EmployerEntity employerEntity = employerRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserRuntimeException("employer with userId: [" + userId + "] does not exist!"));
+                .orElseThrow(UserRuntimeException::EmployerNotFound);
         return Employer.fromEntity(employerEntity);
     }
 

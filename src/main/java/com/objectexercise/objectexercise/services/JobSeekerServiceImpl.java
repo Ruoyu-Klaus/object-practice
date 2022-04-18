@@ -25,7 +25,7 @@ public class JobSeekerServiceImpl implements JobSeekerService {
     @Override
     public JobSeeker getJobSeekerByCurrentUser() {
         AppUser currentLoginUser = userService.getCurrentLoginUser();
-        JobSeekerEntity jobSeeker = jobSeekerRepository.findByUserId(currentLoginUser.getId()).orElseThrow(()->new UserRuntimeException("you are not a job seeker"));
+        JobSeekerEntity jobSeeker = jobSeekerRepository.findByUserId(currentLoginUser.getId()).orElseThrow(UserRuntimeException::UserNotFound);
         return JobSeeker.fromEntity(jobSeeker);
     }
 
@@ -50,7 +50,7 @@ public class JobSeekerServiceImpl implements JobSeekerService {
 
     @Override
     public List<Resume> getJobSeekerResumes(Integer jobSeekerId) {
-        JobSeekerEntity jobSeekerEntity = jobSeekerRepository.findById(jobSeekerId).orElseThrow(() -> new UserRuntimeException("you are not a job seeker"));
+        JobSeekerEntity jobSeekerEntity = jobSeekerRepository.findById(jobSeekerId).orElseThrow(UserRuntimeException::JobSeekerNotFound);
         JobSeeker jobSeeker = JobSeeker.fromEntity(jobSeekerEntity);
         return resumeRepository.findByJobSeekerId(jobSeekerId).stream().map(resumeEntity -> Resume.fromEntity(resumeEntity, jobSeeker)).collect(Collectors.toList());
     }

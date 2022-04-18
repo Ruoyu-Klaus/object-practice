@@ -4,6 +4,7 @@ import com.objectexercise.objectexercise.controller.DTO.ApplicationStatus;
 import com.objectexercise.objectexercise.controller.DTO.JobType;
 import com.objectexercise.objectexercise.controller.requestDTO.JobApplicationForm;
 import com.objectexercise.objectexercise.exceptions.JobApplicationRuntimeException;
+import com.objectexercise.objectexercise.exceptions.ResumeException;
 import com.objectexercise.objectexercise.exceptions.UserRuntimeException;
 import com.objectexercise.objectexercise.model.*;
 import com.objectexercise.objectexercise.repository.Entity.JobApplicationEntity;
@@ -39,7 +40,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         Optional<Resume> resumeOptional = jobSeekerService.getJobSeekerResumes(jobSeekerId).stream().filter(resume -> resume.getId().equals(jobApplicationForm.getResumeId())).findFirst();
         Resume resume = resumeOptional.orElse(null);
         if (isRequireResume && resume == null) {
-            throw new JobApplicationRuntimeException("resume is required or does not exist");
+            throw ResumeException.ResumeIsRequired();
         }
         Integer resumeId = resume != null ? resume.getId() : null;
         JobApplicationEntity jobApplicationEntityToSave = JobApplicationEntity.builder().jobId(jobId).employerId(job.getEmployer().getId()).jobseekerId(jobSeekerId).resumeId(resumeId).build();
@@ -51,9 +52,9 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     public JobApplication updateApplicationStatus(Integer applicationId, ApplicationStatus applicationStatus) {
         AppUser currentLoginUser = userService.getCurrentLoginUser();
         Employer employer = userService.findEmployerByUserId(currentLoginUser.getId());
-        JobApplicationEntity jobApplicationEntity = jobApplicationRepository.findById(applicationId).orElseThrow(() -> new JobApplicationRuntimeException("application not found"));
+        JobApplicationEntity jobApplicationEntity = jobApplicationRepository.findById(applicationId).orElseThrow(JobApplicationRuntimeException::JobApplicationNotFound);
         if (!employer.getId().equals(jobApplicationEntity.getEmployerId())) {
-            throw new UserRuntimeException("employer: have no authorization for this request");
+            throw UserRuntimeException.AuthorizationError();
         }
         Job job = jobService.getJobById(jobApplicationEntity.getJobId());
         Resume resume = getResumeById(jobApplicationEntity.getResumeId());
@@ -67,7 +68,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         AppUser currentLoginUser = userService.getCurrentLoginUser();
         Employer employer = userService.findEmployerByUserId(currentLoginUser.getId());
         if (!Objects.equals(job.getEmployer().getId(), employer.getId())) {
-            throw new UserRuntimeException("employer: [" + employer.getName() + "] have no authorization for this request");
+            throw UserRuntimeException.AuthorizationError();
         }
         List<JobApplicationEntity> jobApplications = jobApplicationRepository.findByJobId(jobId);
 
@@ -77,7 +78,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     }
 
     private Resume getResumeById(Integer resumeId) {
-        ResumeEntity resumeEntity = resumeRepository.findById(resumeId).orElseThrow(() -> new RuntimeException("resume does not exist"));
+        ResumeEntity resumeEntity = resumeRepository.findById(resumeId).orElseThrow(ResumeException::ResumeNotFound);
         JobSeeker jobSeeker = jobSeekerService.getJobSeekerById(resumeEntity.getJobSeekerId());
         return Resume.fromEntity(resumeEntity, jobSeeker);
     }

@@ -1,6 +1,7 @@
 package com.objectexercise.objectexercise.services;
 
-import com.objectexercise.objectexercise.exceptions.JobApplicationRuntimeException;
+import com.objectexercise.objectexercise.exceptions.JobException;
+import com.objectexercise.objectexercise.exceptions.UserRuntimeException;
 import com.objectexercise.objectexercise.model.AppUser;
 import com.objectexercise.objectexercise.model.Employer;
 import com.objectexercise.objectexercise.model.Job;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,14 +25,10 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Job getJobById(Integer jobId) {
-        Optional<JobEntity> jobEntityOptional = jobRepository.findById(jobId);
-        if (!jobEntityOptional.isPresent()) {
-            throw new JobApplicationRuntimeException("Job not found with id: " + jobId);
-        }
-        JobEntity jobEntity = jobEntityOptional.get();
-        EmployerEntity employerEntity = employerRepository.findById(jobEntity.getEmployerId()).orElseThrow(() -> new RuntimeException("employer does not exist"));
+        JobEntity jobEntity = jobRepository.findById(jobId).orElseThrow(JobException::JobNotFound);
+        EmployerEntity employerEntity = employerRepository.findById(jobEntity.getEmployerId()).orElseThrow(UserRuntimeException::EmployerNotFound);
         Employer employer = Employer.fromEntity(employerEntity);
-        return Job.fromEntity(jobEntityOptional.get(), employer);
+        return Job.fromEntity(jobEntity, employer);
     }
 
     @Override

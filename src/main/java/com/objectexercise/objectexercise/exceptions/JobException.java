@@ -6,4 +6,8 @@ public class JobException extends RuntimeException {
         super(message);
     }
 
+    public static JobException JobNotFound() {
+        return new JobException("Job not found");
+    }
+
 }
