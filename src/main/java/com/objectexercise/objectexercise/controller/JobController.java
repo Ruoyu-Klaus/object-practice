@@ -27,26 +27,15 @@ public class JobController {
         return jobService.getAllJobs().stream().map(Job::toJobDTO).collect(Collectors.toList());
     }
 
-    @GetMapping("/bookmarks")
-    public List<JobResponse> getSavedJobs() {
-        return jobService.getSavedJobs().stream().map(Job::toJobDTO).collect(Collectors.toList());
-    }
-
-    @PostMapping("/bookmarks/{jobId}")
-    public JobResponse saveJobToBookmarks(@PathVariable String jobId) {
-        return jobService.saveJobToUser(Integer.parseInt(jobId)).toJobDTO();
+    @PostMapping("")
+    public JobResponse addJob(@RequestBody @Validated JobCreationForm form) {
+        return jobService.createJob(Job.fromDTO(form)).toJobDTO();
     }
 
     @GetMapping("/{jobId}")
     public JobResponse getJobByJobId(@PathVariable String jobId) {
         return jobService.getJobById(Integer.parseInt(jobId)).toJobDTO();
     }
-
-    @PostMapping("")
-    public JobResponse addJob(@RequestBody @Validated JobCreationForm form) {
-        return jobService.createJob(Job.fromDTO(form)).toJobDTO();
-    }
-
 
     @GetMapping(value = "/{jobId}/applications")
     public List<JobApplication> getJobApplications(@PathVariable String jobId) {
@@ -62,5 +51,15 @@ public class JobController {
     @PatchMapping("/{jobId}/applications/{applicationId}")
     public JobApplication updateStatus(@PathVariable String applicationId, @RequestBody JobApplicationStatusUpdate status, @PathVariable String jobId) {
         return applicationService.updateApplicationStatus(Integer.parseInt(applicationId), status.getApplicationStatus());
+    }
+
+    @GetMapping("/bookmarks")
+    public List<JobResponse> getSavedJobs() {
+        return jobService.getSavedJobs().stream().map(Job::toJobDTO).collect(Collectors.toList());
+    }
+
+    @PostMapping("/bookmarks/{jobId}")
+    public JobResponse saveJobToBookmarks(@PathVariable String jobId) {
+        return jobService.saveJobToUser(Integer.parseInt(jobId)).toJobDTO();
     }
 }

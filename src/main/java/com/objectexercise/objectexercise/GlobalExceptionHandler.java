@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
     final HttpStatus BAD_REQUEST = HttpStatus.BAD_REQUEST;
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiErrorResponse> handle(RuntimeException ex) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiErrorResponse> handle(Exception ex) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
             JobApplicationRuntimeException.class,
             JobException.class,
             ResumeException.class})
-    public ResponseEntity<ApiErrorResponse> handle(Exception ex) {
+    public ResponseEntity<ApiErrorResponse> handle(RuntimeException ex) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(BAD_REQUEST, ex.getMessage());
         return ResponseEntity.status(BAD_REQUEST).body(errorResponse);
     }
