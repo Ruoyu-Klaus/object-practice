@@ -29,15 +29,25 @@ public class Config extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        String getUserResumesPath = "/api/v1/resumes/**";
+        String getUserApplicationsPath = "/api/v1/applications";
+        String saveJobPath = "/api/v1/jobs/bookmarks/{jobId}";
+        String getSavedJobsPath = "/api/v1/jobs/bookmarks";
+        String confirmJobApplicationStatusPath = "/api/v1/jobs/{jobId}/applications/{applicationId}";
+        String applyJobApplicationPath = "/api/v1/jobs/{jobId}/applications}";
+        String createJobPath = "/api/v1/jobs";
+
         http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
                 .mvcMatchers("/api/v1/users/**").hasAnyAuthority("ADMIN")
-                .mvcMatchers(HttpMethod.GET, "/api/v1/jobs/**").hasAnyAuthority("APPLICANT", "RECRUITER", "ADMIN")
-                .mvcMatchers(HttpMethod.POST, "/api/v1/jobs/*").hasAnyAuthority("RECRUITER", "APPLICANT")
-                .mvcMatchers(HttpMethod.POST, "/api/v1/jobs/{jobId}/applications}").hasAnyAuthority( "APPLICANT")
-                .mvcMatchers(HttpMethod.POST, "/api/v1/{jobId}/applications/{applicationId}").hasAnyAuthority( "RECRUITER")
-                .antMatchers(HttpMethod.POST, "/api/v1/resumes/**").hasAnyAuthority("APPLICANT")
+                .mvcMatchers(HttpMethod.POST, createJobPath).hasAnyAuthority("RECRUITER")
+                .mvcMatchers(HttpMethod.POST, applyJobApplicationPath).hasAnyAuthority( "APPLICANT")
+                .mvcMatchers(HttpMethod.PATCH, confirmJobApplicationStatusPath).hasAnyAuthority( "RECRUITER")
+                .mvcMatchers(HttpMethod.GET, getSavedJobsPath).hasAnyAuthority("APPLICANT")
+                .mvcMatchers(HttpMethod.POST, saveJobPath).hasAnyAuthority("APPLICANT")
+                .mvcMatchers(HttpMethod.GET, getUserApplicationsPath).hasAnyAuthority( "APPLICANT")
+                .antMatchers(HttpMethod.POST, getUserResumesPath).hasAnyAuthority("APPLICANT")
                 .and()
                 .addFilter(new CustomAuthenticationFilter(authenticationManagerBean()))
                 .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

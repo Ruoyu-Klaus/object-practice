@@ -74,4 +74,13 @@ public class JobApplicationServiceImpl implements JobApplicationService {
                 .map(applicationEntity -> JobApplication.fromEntity(applicationEntity, job, resumeService.getResumeById(applicationEntity.getResumeId())))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<JobApplication> getUserJobApplications() {
+        Integer jobSeekerId = jobSeekerService.getJobSeekerByCurrentUser().getId();
+        List<JobApplicationEntity> jobApplications = jobApplicationRepository.findByJobseekerId(jobSeekerId);
+        return jobApplications.stream()
+                .map(applicationEntity -> JobApplication.fromEntity(applicationEntity, jobService.getJobById(applicationEntity.getJobId()), resumeService.getResumeById(applicationEntity.getResumeId())))
+                .collect(Collectors.toList());
+    }
 }

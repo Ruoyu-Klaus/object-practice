@@ -12,4 +12,6 @@ public interface JobApplicationService {
     JobApplication updateApplicationStatus(Integer applicationId, ApplicationStatus applicationStatus);
 
     List<JobApplication> getJobApplications(Integer jobId);
+
+    List<JobApplication> getUserJobApplications();
 }

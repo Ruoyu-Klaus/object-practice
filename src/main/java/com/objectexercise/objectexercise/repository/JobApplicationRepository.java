@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface JobApplicationRepository extends JpaRepository<JobApplicationEntity,Integer> {
     List<JobApplicationEntity> findByJobId (Integer jobId);
+    List<JobApplicationEntity> findByJobseekerId (Integer jobSeekerId);
 }

@@ -5,7 +5,6 @@ import com.objectexercise.objectexercise.controller.requestDTO.ResumeCreationFor
 import com.objectexercise.objectexercise.controller.responseDTO.ResumeResponse;
 import com.objectexercise.objectexercise.model.Resume;
 import com.objectexercise.objectexercise.services.JobSeekerService;
-import com.objectexercise.objectexercise.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +17,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ResumeController {
 
-    final JobSeekerService jobSeekerService;
-    final UserService userService;
+    private final JobSeekerService jobSeekerService;
 
-    @GetMapping("/my")
-    public List<ResumeResponse> getMyResumes() {
+    @GetMapping("")
+    public List<ResumeResponse> getUserResumes() {
         List<Resume> jobSeekerResumes = jobSeekerService.getJobSeekerResumes();
         return jobSeekerResumes.stream().map(Resume::toDTO).collect(Collectors.toList());
     }
